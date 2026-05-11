@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       SEO BÁSICO
+       - title: entre 50-60 caracteres, incluye palabra clave principal
+       - description: entre 150-160 caracteres, descriptiva y con llamado a la acción
+       ============================================================ -->
+  <title>Jireh – Tienda Online | Productos seleccionados con cuidado</title>
+  <meta name="description" content="Jireh es una tienda familiar con productos seleccionados. Hacé tu pedido fácil y rápido por WhatsApp. Entregas y atención personalizada." />
+  <meta name="keywords" content="tienda online, productos seleccionados, jireh, comprar por whatsapp, tienda familiar" />
+  <meta name="author" content="Jireh" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- ============================================================
+       CANONICAL
+       Reemplazá con tu dominio real para evitar contenido duplicado.
+       ============================================================ -->
+  <link rel="canonical" href="https://tudominio.com/" />
+
+  <!-- ============================================================
+       OPEN GRAPH (Facebook, WhatsApp, LinkedIn)
+       Controla cómo se ve el link cuando alguien lo comparte.
+       og:image recomendado: 1200×630 px.
+       ============================================================ -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:locale"      content="es_AR" />
+  <meta property="og:site_name"   content="Jireh" />
+  <meta property="og:title"       content="Jireh – Tienda Online" />
+  <meta property="og:description" content="Productos seleccionados con cuidado, entregados con amor. Pedí fácil por WhatsApp." />
+  <meta property="og:url"         content="https://tudominio.com/" />
+  <meta property="og:image"       content="https://tudominio.com/og-image.jpg" />
+  <meta property="og:image:alt"   content="Logo de Jireh tienda online" />
+
+  <!-- ============================================================
+       TWITTER CARD
+       summary_large_image muestra imagen grande al compartir en X/Twitter.
+       ============================================================ -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Jireh – Tienda Online" />
+  <meta name="twitter:description" content="Productos seleccionados con cuidado, entregados con amor." />
+  <meta name="twitter:image"       content="https://tudominio.com/og-image.jpg" />
+
+  <!-- ============================================================
+       FAVICON
+       Colocá tus íconos en la raíz del proyecto.
+       Generalos en: https://realfavicongenerator.net
+       ============================================================ -->
+  <link rel="icon"             href="/favicon.ico" sizes="any" />
+  <link rel="icon"             href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest"         href="/site.webmanifest" />
+
+  <!-- ============================================================
+       DATOS ESTRUCTURADOS – JSON-LD (Schema.org)
+       Le dice a Google exactamente qué tipo de negocio sos.
+       Completá los campos marcados con ← con tus datos reales.
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "Jireh",
+    "description": "Tienda familiar con productos seleccionados. Pedidos por WhatsApp.",
+    "url": "https://tudominio.com/",
+    "logo": "https://tudominio.com/logo.png",
+    "image": "https://tudominio.com/og-image.jpg",
+    "telephone": "+5491100000000",
+    "priceRange": "$$",
+    "currenciesAccepted": "ARS",
+    "paymentAccepted": "Cash, Transfer",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "AR",
+      "addressLocality": "Buenos Aires"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "telephone": "+5491100000000",
+      "contactOption": "TollFree",
+      "availableLanguage": "Spanish"
+    },
+    "sameAs": []
+  }
+  </script>
+
+  <!-- ============================================================
+       FUENTES TIPOGRÁFICAS
+       preconnect acelera la carga de Google Fonts.
+       ============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Hoja de estilos principal -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ============================================================
+       SKIP LINK – Accesibilidad
+       Permite a usuarios de teclado/lectores de pantalla saltar
+       directo al contenido principal.
+       ============================================================ -->
+  <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
+  <!-- ============================================================
+       HEADER / NAVBAR
+       Usamos <header> + <nav> para semántica correcta.
+       role="banner" es implícito en <header> al nivel del documento.
+       ============================================================ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+
+      <!-- Logo: enlace a la página de inicio -->
+      <a href="/" class="navbar__logo" aria-label="Jireh – Ir al inicio">JIREH</a>
+
+      <!-- Navegación principal -->
+      <nav class="navbar__links" aria-label="Navegación principal">
+        <a href="#catalogo">Catálogo</a>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+
+      <!-- Botón del carrito con contador accesible -->
+      <button class="cart-btn" id="cartBtn" aria-label="Abrir carrito de compras" aria-haspopup="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+          aria-hidden="true" focusable="false">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <!-- aria-live anuncia cambios al badge para lectores de pantalla -->
+        <span class="cart-badge" id="cartBadge" aria-live="polite" aria-label="productos en el carrito">0</span>
+      </button>
+
+      <!-- Botón hamburger para mobile -->
+      <button class="hamburger" id="hamburger"
+        aria-label="Abrir menú de navegación"
+        aria-expanded="false"
+        aria-controls="mobileNav">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <!-- Menú mobile desplegable -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Menú mobile" aria-hidden="true">
+      <a href="#catalogo" onclick="closeMobileNav()">Catálogo</a>
+      <a href="#nosotros" onclick="closeMobileNav()">Nosotros</a>
+      <a href="#contacto" onclick="closeMobileNav()">Contacto</a>
+    </nav>
+  </header>
+
+  <!-- ============================================================
+       CONTENIDO PRINCIPAL
+       id="main-content" es el destino del skip-link de arriba.
+       ============================================================ -->
+  <main id="main-content">
+
+    <!-- ============================================================
+         HERO – Sección de bienvenida
+         <section> con aria-labelledby apunta al h1 para accesibilidad.
+         ============================================================ -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero__content">
+        <p class="hero__tag" aria-hidden="true">Bienvenido a</p>
+        <!-- h1: una sola por página, contiene la palabra clave principal -->
+        <h1 class="hero__title" id="heroTitle">JIREH</h1>
+        <p class="hero__subtitle">Productos seleccionados con cuidado,<br>entregados con amor.</p>
+        <a href="#catalogo" class="btn btn--primary">Ver catálogo</a>
+      </div>
+      <!-- Elemento decorativo, oculto a lectores de pantalla -->
+      <div class="hero__deco" aria-hidden="true"></div>
+    </section>
+
+    <!-- ============================================================
+         CATÁLOGO DE PRODUCTOS
+         aria-live="polite" para anunciar cuando se carguen productos.
+         ============================================================ -->
+    <section class="section" id="catalogo" aria-labelledby="catalogoTitle">
+      <div class="container">
+
+        <header class="section__header">
+          <h2 class="section__title" id="catalogoTitle">Catálogo</h2>
+          <p class="section__desc">Todos nuestros productos, disponibles para vos.</p>
+        </header>
+
+        <!-- Filtros: búsqueda + categoría -->
+        <div class="filters" role="search">
+          <label for="searchInput" class="visually-hidden">Buscar producto</label>
+          <input
+            type="search"
+            id="searchInput"
+            class="filters__search"
+            placeholder="Buscar producto…"
+            autocomplete="off"
+            aria-label="Buscar en el catálogo"
+          />
+
+          <!-- Dropdown de categorías (se puebla dinámicamente con JS) -->
+          <div class="filters__category-wrap">
+            <select
+              id="categorySelect"
+              class="filters__category"
+              aria-label="Filtrar por categoría"
+            >
+              <option value="*">Todas las categorías</option>
+              <!-- Las opciones se insertan desde script.js -->
+            </select>
+            <!-- Botón limpiar filtro: visible solo cuando hay categoría activa -->
+            <button
+              id="clearCategory"
+              class="filters__clear"
+              aria-label="Quitar filtro de categoría"
+              hidden
+            >✕</button>
+          </div>
+        </div>
+
+        <!-- Estado de carga / error (se oculta cuando los productos cargan) -->
+        <div class="status" id="status" role="status" aria-live="polite" aria-label="Estado de carga">
+          <div class="spinner" aria-hidden="true"></div>
+          <p>Cargando productos…</p>
+        </div>
+
+        <!-- Grid de productos: cada card es un <article> con datos estructurados -->
+        <div class="products-grid"
+          id="productsGrid"
+          aria-label="Catálogo de productos"
+          aria-live="polite">
+        </div>
+
+        <!-- Estado vacío (sin resultados) -->
+        <div class="empty-state" id="emptyState" style="display:none;" role="alert">
+          <p>No se encontraron productos.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SOBRE NOSOTROS
+         ============================================================ -->
+    <section class="section section--alt" id="nosotros" aria-labelledby="nosotrosTitle">
+      <div class="container">
+        <div class="about">
+          <div class="about__text">
+            <h2 class="section__title" id="nosotrosTitle">Sobre Jireh</h2>
+            <p>Somos una tienda familiar comprometida con la calidad y la cercanía. Cada producto que ofrecemos pasa por una cuidadosa selección para garantizarte lo mejor.</p>
+            <p>Realizamos entregas y atendemos pedidos personalizados. No dudes en escribirnos.</p>
+          </div>
+          <!-- Elemento decorativo visual -->
+          <div class="about__deco" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CONTACTO
+         ============================================================ -->
+    <section class="section" id="contacto" aria-labelledby="contactoTitle">
+      <div class="container">
+        <header class="section__header">
+          <h2 class="section__title" id="contactoTitle">Contacto</h2>
+          <p class="section__desc">¿Tenés alguna consulta? Escribinos por WhatsApp.</p>
+        </header>
+        <div class="contact-cta">
+          <!-- rel="noopener noreferrer" por seguridad en links externos -->
+          <a class="btn btn--primary"
+            href="https://wa.me/5491100000000"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Contactar a Jireh por WhatsApp (abre en nueva pestaña)">
+            Escribinos por WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /main -->
+
+  <!-- ============================================================
+       FOOTER
+       role="contentinfo" es implícito en <footer> al nivel del documento.
+       ============================================================ -->
+  <footer class="footer" role="contentinfo">
+    <p>© <time datetime="2025">2026</time> Ōris Design · Todos los derechos reservados</p>
+  </footer>
+
+  <!-- ============================================================
+       PANEL CARRITO (offcanvas lateral)
+       role="dialog" + aria-modal para lectores de pantalla.
+       ============================================================ -->
+  <div class="cart-overlay" id="cartOverlay" aria-hidden="true"></div>
+
+  <aside class="cart-panel" id="cartPanel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Carrito de compras"
+    aria-hidden="true">
+
+    <div class="cart-panel__header">
+      <h3 id="cartPanelTitle">Tu carrito</h3>
+      <button class="cart-panel__close" id="cartClose" aria-label="Cerrar carrito">&times;</button>
+    </div>
+
+    <div class="cart-panel__body" id="cartBody" role="list" aria-label="Productos en el carrito">
+      <p class="cart-empty" id="cartEmpty">Tu carrito está vacío.</p>
+    </div>
+
+    <div class="cart-panel__footer" id="cartFooter" style="display:none;">
+      <div class="cart-total">
+        <span>Total</span>
+        <strong id="cartTotal">$0</strong>
+      </div>
+      <button class="btn btn--primary btn--full" id="checkoutBtn">Finalizar pedido</button>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       MODAL – Finalizar pedido
+       ============================================================ -->
+  <div class="modal-overlay" id="modalOverlay" role="presentation">
+    <div class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalTitle"
+      aria-describedby="modalSubtitle">
+
+      <button class="modal__close" id="modalClose" aria-label="Cerrar modal">&times;</button>
+      <h3 class="modal__title" id="modalTitle">Completá tu pedido</h3>
+      <p class="modal__subtitle" id="modalSubtitle">Te contactaremos por WhatsApp para confirmar.</p>
+
+      <!-- Formulario de pedido -->
+      <!-- Nota: no usamos <form> para evitar recargas de página -->
+      <div class="form" role="form" aria-label="Formulario de pedido">
+
+        <div class="form__group">
+          <label for="clientName">Nombre y apellido <abbr title="requerido">*</abbr></label>
+          <input type="text"
+            id="clientName"
+            placeholder="Juan Pérez"
+            autocomplete="name"
+            aria-required="true"
+            aria-describedby="nameError" />
+          <span class="form__error" id="nameError" role="alert"></span>
+        </div>
+
+        <div class="form__group">
+          <label for="clientPhone">Celular <abbr title="requerido">*</abbr></label>
+          <input type="tel"
+            id="clientPhone"
+            placeholder="11 XXXX XXXX"
+            autocomplete="tel"
+            aria-required="true"
+            aria-describedby="phoneError" />
+          <span class="form__error" id="phoneError" role="alert"></span>
+        </div>
+
+        <div class="form__group">
+          <label for="clientComments">Comentarios adicionales</label>
+          <textarea id="clientComments" rows="3" placeholder="Ej: Entregar por la tarde…"></textarea>
+        </div>
+
+        <!-- Resumen del pedido (se renderiza dinámicamente con JS) -->
+        <div class="order-summary" id="orderSummary" aria-label="Resumen del pedido"></div>
+
+        <button class="btn btn--primary btn--full btn--whatsapp" id="sendWhatsApp">
+          <!-- SVG de WhatsApp, decorativo -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+            fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Enviar pedido por WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script principal (defer ya no es necesario porque está al final del body) -->
+  <script src="script.js"></script>
+</body>
+</html>
