@@ -362,8 +362,8 @@ function renderCatalog(products) {
         ${hasLongDesc ? `role="button" tabindex="0" aria-label="Ver detalle de ${p.nombre}"` : ''}>
         <h3 class="card__name">${p.nombre}</h3>
         <p class="card__desc">${p.descripcion}</p>
-        <p class="card__price">${formatPrice(p.precio)}</p>
         ${hasLongDesc ? '<span class="card__expand-hint" aria-hidden="true">Ver más ↓</span>' : ''}
+        <p class="card__price">${formatPrice(p.precio)}</p>
       </div>
       <div class="card__footer">
         <button class="card__add-btn ${addedClass}"

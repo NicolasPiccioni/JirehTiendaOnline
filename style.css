@@ -486,11 +486,13 @@ input, textarea, select { font-family: inherit; font-size: 1rem; }
   min-height: calc(1.5em * 3);
 }
 .card__price {
-  font-family: var(--font-display);
-  font-size: clamp(1.2rem, 3vw, 1.45rem);
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: .01em;
   color: var(--c-accent);
-  margin-top: 8px;
+  margin-top: auto; /* siempre se pega al fondo del body, alineado entre cards */
+  padding-top: 8px;
 }
 .card__footer {
   padding: 0 16px 16px;
@@ -664,9 +666,9 @@ input, textarea, select { font-family: inherit; font-size: 1rem; }
   font-size: 1.05rem;
 }
 .cart-total strong {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 600;
   color: var(--c-accent);
 }
 
@@ -1065,9 +1067,10 @@ body.overflow-hidden { overflow: hidden; }
   padding-right: 30px;
 }
 .desc-drawer__price {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: .01em;
   color: var(--c-accent);
 }
 .desc-drawer__desc {
@@ -1080,10 +1083,14 @@ body.overflow-hidden { overflow: hidden; }
 /* Hint "Ver más" en card__body */
 .card__body--expandable { cursor: pointer; }
 .card__expand-hint {
-  font-size: .75rem;
-  color: var(--c-accent);
+  display: block;
+  text-align: right;
+  font-size: .78rem;
   font-weight: 500;
-  letter-spacing: .03em;
+  letter-spacing: .05em;
+  color: var(--c-accent);
+  opacity: .75;
+  height: 1.2em; /* altura fija: el margin-top:auto del precio la compensa en cards sin hint */
 }
 
 /* ── prefers-reduced-motion ──────────────────────────────── */
