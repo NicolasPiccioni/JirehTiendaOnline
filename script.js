@@ -340,22 +340,26 @@ function renderCatalog(products) {
 
     const hasLongDesc = p.descripcion && p.descripcion.length > 80;
 
+    // SVG lupa reutilizable
+    const zoomSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2.2"
+      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="8"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      <line x1="11" y1="8"  x2="11" y2="14"/>
+      <line x1="8"  y1="11" x2="14" y2="11"/>
+    </svg>`;
+
     card.innerHTML = `
       <div class="card__img-wrap" role="button" tabindex="0"
-        aria-label="Ver imagen de ${p.nombre}" title="Ver imagen">
+        aria-label="Ver imagen de ${p.nombre}">
         <img class="card__img" src="${imgSrc}" alt="${p.nombre}" loading="lazy"
           onerror="this.src='https://placehold.co/400x300/E8E3DA/8A8278?text=Sin+imagen'">
         ${stockBadge}
-        <span class="card__img-zoom-hint" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
-          </svg>
-        </span>
+        <span class="card__img-zoom-hint" aria-hidden="true">${zoomSVG}</span>
       </div>
-      <div class="card__body ${hasLongDesc ? 'card__body--expandable' : ''}"
-        ${hasLongDesc ? 'role="button" tabindex="0" aria-label="Ver descripción completa de ' + p.nombre + '"' : ''}>
+      <div class="card__body${hasLongDesc ? ' card__body--expandable' : ''}"
+        ${hasLongDesc ? `role="button" tabindex="0" aria-label="Ver detalle de ${p.nombre}"` : ''}>
         <h3 class="card__name">${p.nombre}</h3>
         <p class="card__desc">${p.descripcion}</p>
         <p class="card__price">${formatPrice(p.precio)}</p>
@@ -370,7 +374,7 @@ function renderCatalog(products) {
       </div>
     `;
 
-    // ── Botón agregar al carrito ──────────────────────────────
+    // Botón agregar al carrito
     const btn = card.querySelector('.card__add-btn');
     btn.addEventListener('click', e => {
       e.stopPropagation();
@@ -379,31 +383,25 @@ function renderCatalog(products) {
       btn.textContent = '✓ En el carrito';
     });
 
-    // ── Lightbox: clic en imagen ──────────────────────────────
+    // Lightbox al tocar la imagen
     const imgWrap = card.querySelector('.card__img-wrap');
     imgWrap.addEventListener('click', e => {
       e.stopPropagation();
       openLightbox(imgSrc, p.nombre);
     });
     imgWrap.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openLightbox(imgSrc, p.nombre);
-      }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(imgSrc, p.nombre); }
     });
 
-    // ── Drawer descripción: clic en card__body ────────────────
+    // Drawer de descripción al tocar el body
     if (hasLongDesc) {
       const body = card.querySelector('.card__body');
       body.addEventListener('click', e => {
         e.stopPropagation();
-        openDescDrawer(p, imgSrc, card);
+        openDescDrawer(p, imgSrc);
       });
       body.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openDescDrawer(p, imgSrc, card);
-        }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDescDrawer(p, imgSrc); }
       });
     }
 
@@ -848,10 +846,6 @@ document.addEventListener('DOMContentLoaded', init);
    🔍  LIGHTBOX – Imagen a pantalla completa
    ============================================================ */
 
-/**
- * Crea el nodo del lightbox la primera vez; lo reutiliza después.
- * @returns {HTMLElement} overlay del lightbox
- */
 function getLightboxEl() {
   let lb = document.getElementById('jireh-lightbox');
   if (lb) return lb;
@@ -869,39 +863,31 @@ function getLightboxEl() {
     </div>
   `;
 
-  // Cerrar al clic en el fondo o en el botón
   lb.addEventListener('click', e => {
     if (e.target === lb || e.target.closest('.lightbox__close')) closeLightbox();
   });
-
-  // Cerrar con Escape
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && lb.classList.contains('open')) closeLightbox();
   });
 
-  // Swipe hacia abajo en mobile cierra
-  let touchStartY = 0;
-  lb.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
-  lb.addEventListener('touchend', e => {
-    if (e.changedTouches[0].clientY - touchStartY > 60) closeLightbox();
+  // Swipe down cierra en mobile
+  let ty = 0;
+  lb.addEventListener('touchstart', e => { ty = e.touches[0].clientY; }, { passive: true });
+  lb.addEventListener('touchend',   e => {
+    if (e.changedTouches[0].clientY - ty > 60) closeLightbox();
   }, { passive: true });
 
   document.body.appendChild(lb);
   return lb;
 }
 
-/**
- * Abre el lightbox con la imagen indicada.
- * @param {string} src  URL de la imagen
- * @param {string} alt  Texto alternativo
- */
 function openLightbox(src, alt) {
   const lb  = getLightboxEl();
   const img = lb.querySelector('.lightbox__img');
   img.src = src;
   img.alt = alt;
   lb.classList.add('open');
-  document.body.classList.add('lightbox-open'); // bloquea scroll del fondo
+  document.body.classList.add('overflow-hidden');
   lb.querySelector('.lightbox__close').focus();
 }
 
@@ -909,31 +895,37 @@ function closeLightbox() {
   const lb = document.getElementById('jireh-lightbox');
   if (!lb) return;
   lb.classList.remove('open');
-  document.body.classList.remove('lightbox-open');
+  document.body.classList.remove('overflow-hidden');
 }
 
 /* ============================================================
-   📄  DRAWER de descripción – flota sobre el grid, sin mover cards
+   📄  DRAWER de descripción
    ============================================================ */
 
-/**
- * Crea el nodo del drawer la primera vez.
- * @returns {HTMLElement}
- */
 function getDescDrawerEl() {
   let dr = document.getElementById('jireh-desc-drawer');
   if (dr) return dr;
+
+  // SVG lupa para el botón de imagen dentro del drawer
+  const zoomSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" stroke-width="2.2"
+    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="11" cy="11" r="8"/>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    <line x1="11" y1="8"  x2="11" y2="14"/>
+    <line x1="8"  y1="11" x2="14" y2="11"/>
+  </svg>`;
 
   dr = document.createElement('div');
   dr.id = 'jireh-desc-drawer';
   dr.className = 'desc-drawer';
   dr.setAttribute('role', 'dialog');
-  dr.setAttribute('aria-modal', 'false');
   dr.setAttribute('aria-label', 'Detalle del producto');
   dr.innerHTML = `
     <button class="desc-drawer__close" aria-label="Cerrar detalle">&times;</button>
-    <div class="desc-drawer__img-wrap">
+    <div class="desc-drawer__img-wrap" role="button" tabindex="0" aria-label="Ver imagen ampliada">
       <img class="desc-drawer__img" src="" alt="" />
+      <span class="desc-drawer__zoom-hint" aria-hidden="true">${zoomSVG}</span>
     </div>
     <div class="desc-drawer__content">
       <h4 class="desc-drawer__name"></h4>
@@ -942,14 +934,30 @@ function getDescDrawerEl() {
     </div>
   `;
 
-  // Overlay invisible detrás para cerrar al tocar fuera
-  const overlay = document.createElement('div');
-  overlay.id = 'jireh-desc-overlay';
-  overlay.className = 'desc-overlay';
-  overlay.addEventListener('click', closeDescDrawer);
-  document.body.appendChild(overlay);
+  // Overlay para cerrar al tocar fuera
+  const ov = document.createElement('div');
+  ov.id = 'jireh-desc-overlay';
+  ov.className = 'desc-overlay';
+  ov.addEventListener('click', closeDescDrawer);
+  document.body.appendChild(ov);
 
   dr.querySelector('.desc-drawer__close').addEventListener('click', closeDescDrawer);
+
+  // Imagen del drawer abre lightbox
+  const imgWrap = dr.querySelector('.desc-drawer__img-wrap');
+  imgWrap.addEventListener('click', () => {
+    const src = dr.querySelector('.desc-drawer__img').src;
+    const alt = dr.querySelector('.desc-drawer__img').alt;
+    closeDescDrawer();
+    openLightbox(src, alt);
+  });
+  imgWrap.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      imgWrap.click();
+    }
+  });
+
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && dr.classList.contains('open')) closeDescDrawer();
   });
@@ -958,17 +966,10 @@ function getDescDrawerEl() {
   return dr;
 }
 
-/**
- * Abre el drawer con los datos del producto.
- * @param {Product}     p       Objeto producto
- * @param {string}      imgSrc  URL de la imagen
- * @param {HTMLElement} cardEl  Elemento card (para posicionar en desktop)
- */
-function openDescDrawer(p, imgSrc, cardEl) {
+function openDescDrawer(p, imgSrc) {
   const dr = getDescDrawerEl();
   const ov = document.getElementById('jireh-desc-overlay');
 
-  // Rellenar contenido
   dr.querySelector('.desc-drawer__img').src = imgSrc;
   dr.querySelector('.desc-drawer__img').alt = p.nombre;
   dr.querySelector('.desc-drawer__name').textContent  = p.nombre;

@@ -848,53 +848,45 @@ input, textarea, select { font-family: inherit; font-size: 1rem; }
 }
 
 /* ============================================================
-   🔍  LIGHTBOX – Imagen a pantalla completa
+   🔍  LIGHTBOX
    ============================================================ */
 
-/* Bloquea el scroll del body mientras el lightbox está abierto */
-body.lightbox-open { overflow: hidden; }
+body.overflow-hidden { overflow: hidden; }
 
 .lightbox {
   position: fixed;
   inset: 0;
   z-index: 3000;
-  background: rgba(10, 9, 8, .92);
+  background: rgba(10,9,8,.93);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .28s cubic-bezier(.4,0,.2,1);
+  transition: opacity .25s cubic-bezier(.4,0,.2,1);
 }
-.lightbox.open {
-  opacity: 1;
-  pointer-events: all;
-}
+.lightbox.open { opacity: 1; pointer-events: all; }
 
 .lightbox__inner {
-  max-width: min(92vw, 960px);
-  max-height: 88vh;
+  max-width: min(94vw, 980px);
+  max-height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: scale(.93);
+  transform: scale(.94);
   transition: transform .3s cubic-bezier(.22,1,.36,1);
 }
-.lightbox.open .lightbox__inner {
-  transform: scale(1);
-}
+.lightbox.open .lightbox__inner { transform: scale(1); }
 
 .lightbox__img {
   display: block;
   max-width: 100%;
-  max-height: 88vh;
-  width: auto;
-  height: auto;
+  max-height: 90vh;
+  width: auto; height: auto;
   border-radius: 10px;
   box-shadow: 0 24px 80px rgba(0,0,0,.6);
   object-fit: contain;
-  /* Impide que se "arrastre" en mobile */
   -webkit-user-drag: none;
   user-select: none;
 }
@@ -902,91 +894,101 @@ body.lightbox-open { overflow: hidden; }
 .lightbox__close {
   position: absolute;
   top: 16px; right: 20px;
-  font-size: 2rem;
+  font-size: 2.2rem;
   color: rgba(255,255,255,.75);
   line-height: 1;
   transition: color .2s;
   z-index: 1;
 }
-.lightbox__close:hover { color: #fff; }
+.lightbox__close:hover,
+.lightbox__close:focus { color: #fff; outline: none; }
 
-/* Hint de zoom que aparece sobre la imagen al hacer hover en la card */
-.card__img-wrap {
-  cursor: zoom-in;
-}
+/* ── Zoom hint en card__img-wrap ────────────────────────── */
+.card__img-wrap { cursor: zoom-in; }
+
 .card__img-zoom-hint {
   position: absolute;
   bottom: 10px; right: 10px;
-  background: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.88);
   border-radius: 50%;
   width: 32px; height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--c-text);
+  pointer-events: none;
+  /* Desktop: aparece solo al hover */
   opacity: 0;
   transform: scale(.8);
   transition: opacity .2s, transform .2s;
-  pointer-events: none;
-  color: var(--c-text);
 }
-.card__img-wrap:hover .card__img-zoom-hint,
-.card__img-wrap:focus .card__img-zoom-hint {
+.card__img-wrap:hover .card__img-zoom-hint {
   opacity: 1;
   transform: scale(1);
 }
 
+/* Touch devices (mobile + tablet): ícono SIEMPRE visible */
+@media (hover: none) {
+  .card__img-zoom-hint {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* ============================================================
-   📄  DRAWER de descripción – aparece sobre el grid sin moverlo
+   📄  DRAWER de descripción
    ============================================================ */
 
-/* Overlay transparente que cierra el drawer al tocar fuera */
 .desc-overlay {
   position: fixed;
   inset: 0;
   z-index: 1500;
-  background: transparent;
-  pointer-events: none;
+  background: rgba(10,9,8,.35);
   opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
 }
-.desc-overlay.open {
-  pointer-events: all;
-  opacity: 1;
-}
+.desc-overlay.open { opacity: 1; pointer-events: all; }
 
-/* El drawer en sí: en mobile aparece como bottom-sheet,
-   en desktop como panel flotante centrado */
+/* Mobile y tablet: bottom-sheet que sube desde abajo */
 .desc-drawer {
   position: fixed;
+  bottom: 0; left: 0; right: 0;
   z-index: 1600;
   background: var(--c-surface);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   box-shadow: var(--shadow-lg);
-  padding: 24px 22px 32px;
-  max-height: 80vh;
+  padding: 24px 22px 36px;
+  max-height: 82vh;
   overflow-y: auto;
-
-  /* Mobile: sube desde abajo */
-  bottom: 0; left: 0; right: 0;
   transform: translateY(100%);
   transition: transform .35s cubic-bezier(.22,1,.36,1);
+  /* Pequeña "pastilla" visual arriba */
 }
-.desc-drawer.open {
-  transform: translateY(0);
+.desc-drawer::before {
+  content: '';
+  display: block;
+  width: 40px; height: 4px;
+  border-radius: 2px;
+  background: var(--c-border);
+  margin: 0 auto 18px;
 }
+.desc-drawer.open { transform: translateY(0); }
 
-/* En pantallas medianas y grandes: cuadro centrado flotante */
-@media (min-width: 640px) {
+/* Desktop: cuadro flotante centrado */
+@media (min-width: 768px) {
   .desc-drawer {
     border-radius: var(--radius-lg);
-    bottom: auto;
+    inset: auto;
     left: 50%; top: 50%;
-    transform: translate(-50%, -44%) scale(.95);
-    width: min(480px, 92vw);
-    max-height: 80vh;
-    transition: opacity .28s, transform .3s cubic-bezier(.22,1,.36,1);
+    transform: translate(-50%, -46%) scale(.96);
+    width: min(500px, 92vw);
+    max-height: 82vh;
     opacity: 0;
     pointer-events: none;
+    transition: opacity .25s, transform .3s cubic-bezier(.22,1,.36,1);
   }
+  .desc-drawer::before { display: none; }
   .desc-drawer.open {
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
@@ -996,35 +998,70 @@ body.lightbox-open { overflow: hidden; }
 
 .desc-drawer__close {
   position: absolute;
-  top: 14px; right: 18px;
-  font-size: 1.6rem;
+  top: 16px; right: 18px;
+  font-size: 1.7rem;
   color: var(--c-muted);
   line-height: 1;
   transition: color .2s;
 }
-.desc-drawer__close:hover { color: var(--c-text); }
+.desc-drawer__close:hover,
+.desc-drawer__close:focus { color: var(--c-text); outline: none; }
 
-/* Imagen en miniatura dentro del drawer */
+/* Imagen dentro del drawer — siempre clickeable con zoom hint visible */
 .desc-drawer__img-wrap {
+  position: relative;
   width: 100%;
   aspect-ratio: 16/9;
   border-radius: var(--radius-md);
   overflow: hidden;
   margin-bottom: 16px;
   background: var(--c-bg);
+  cursor: zoom-in;
 }
 .desc-drawer__img {
   width: 100%; height: 100%;
   object-fit: cover;
+  transition: transform .4s cubic-bezier(.4,0,.2,1);
+}
+.desc-drawer__img-wrap:hover .desc-drawer__img { transform: scale(1.04); }
+
+/* Zoom hint dentro del drawer — SIEMPRE visible en touch, hover en desktop */
+.desc-drawer__zoom-hint {
+  position: absolute;
+  bottom: 10px; right: 10px;
+  background: rgba(255,255,255,.88);
+  border-radius: 50%;
+  width: 34px; height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-text);
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  /* Desktop: solo al hover */
+  opacity: 0;
+  transform: scale(.8);
+}
+.desc-drawer__img-wrap:hover .desc-drawer__zoom-hint {
+  opacity: 1;
+  transform: scale(1);
+}
+/* Touch devices: siempre visible */
+@media (hover: none) {
+  .desc-drawer__zoom-hint {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.desc-drawer__content { display: flex; flex-direction: column; gap: 6px; }
+.desc-drawer__content { display: flex; flex-direction: column; gap: 8px; }
+
 .desc-drawer__name {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 600;
   line-height: 1.2;
-  padding-right: 28px; /* no solapar con el botón cerrar */
+  padding-right: 30px;
 }
 .desc-drawer__price {
   font-family: var(--font-display);
@@ -1035,27 +1072,21 @@ body.lightbox-open { overflow: hidden; }
 .desc-drawer__desc {
   font-size: .9rem;
   color: var(--c-muted);
-  line-height: 1.65;
-  white-space: pre-wrap; /* respeta saltos de línea si los hay */
+  line-height: 1.7;
+  white-space: pre-wrap;
 }
 
-/* Cursor pointer y hint visual en card__body expandible */
-.card__body--expandable {
-  cursor: pointer;
-}
+/* Hint "Ver más" en card__body */
+.card__body--expandable { cursor: pointer; }
 .card__expand-hint {
   font-size: .75rem;
   color: var(--c-accent);
   font-weight: 500;
   letter-spacing: .03em;
-  opacity: .85;
-  transition: opacity .2s;
 }
-.card__body--expandable:hover .card__expand-hint { opacity: 1; }
 
-/* ── prefers-reduced-motion ─────────────────────────────── */
+/* ── prefers-reduced-motion ──────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .lightbox,
-  .lightbox__inner,
-  .desc-drawer { transition-duration: .01ms !important; }
+  .lightbox, .lightbox__inner,
+  .desc-drawer, .desc-overlay { transition-duration: .01ms !important; }
 }
