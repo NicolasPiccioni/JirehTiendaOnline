@@ -31,7 +31,7 @@ const CONFIG = {
   // Hojas internas que nunca deben aparecer como categorías
   EXCLUDED_SHEETS:   ['Config', 'Ajustes'],
 
-  WHATSAPP_NUMBER:   '3484541916',
+  WHATSAPP_NUMBER:   '5491157681641',
   REFRESH_INTERVAL_MS: 5 * 60 * 1000,
 };
 
