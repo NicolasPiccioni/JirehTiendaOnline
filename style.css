@@ -625,6 +625,46 @@ input, textarea, select { font-family: inherit; font-size: 1rem; }
 .cart-item__info { display: flex; flex-direction: column; gap: 4px; }
 .cart-item__name  { font-weight: 500; font-size: .95rem; line-height: 1.3; }
 .cart-item__price { color: var(--c-accent); font-size: .9rem; font-weight: 600; }
+
+/* ── Cuotas en el carrito ───────────────────────────────────── */
+.cart-item__cuotas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.cuota-select {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 26px 5px 10px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: var(--c-surface);
+  color: var(--c-text);
+  font-size: .8rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238A8278' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color var(--transition);
+}
+.cuota-select:focus { outline: none; border-color: var(--c-accent); }
+.cart-item__por-cuota {
+  font-size: .75rem;
+  color: var(--c-muted);
+  white-space: nowrap;
+}
+.order-summary__cuota {
+  display: block;
+  font-size: .72rem;
+  color: var(--c-muted);
+  font-weight: 400;
+  margin-top: 2px;
+}
 .cart-item__qty {
   display: flex;
   align-items: center;

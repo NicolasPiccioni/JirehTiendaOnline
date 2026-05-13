@@ -147,6 +147,46 @@ function normalizeDriveUrl(url) {
   return url;
 }
 
+/**
+ * Parsea la columna "cuotas" del Sheet.
+ *
+ * Formato en la celda (separar cuotas con coma):
+ *   Sin interés:   3        → 3 cuotas sin recargo
+ *   Con interés:   6;15     → 6 cuotas con 15% de recargo
+ *   Mixto:         3, 6;15, 12;25
+ *
+ * Se usa ";" en vez de ":" porque Google Sheets interpreta "3:0" como hora
+ * y lo convierte a número decimal al exportar el CSV.
+ */
+function parseCuotas(raw) {
+  if (!raw || !raw.trim()) return [];
+  return raw.split(',')
+    .map(function(part) {
+      part = part.trim();
+      if (!part) return null;
+      if (part.includes(';')) {
+        var sp      = part.split(';');
+        var n       = parseInt(sp[0].trim(), 10);
+        var recargo = parseFloat(sp[1].trim());
+        if (isNaN(n) || n < 2) return null;
+        return { n: n, recargo: isNaN(recargo) ? 0 : recargo };
+      }
+      var n = parseInt(part.trim(), 10);
+      if (isNaN(n) || n < 2) return null;
+      return { n: n, recargo: 0 };
+    })
+    .filter(Boolean)
+    .sort(function(a, b) { return a.n - b.n; });
+}
+
+function calcPrecio(precioBase, cantidad, cuota) {
+  var base = precioBase * cantidad;
+  if (!cuota) return { total: base, porCuota: null };
+  var total    = base * (1 + cuota.recargo / 100);
+  var porCuota = total / cuota.n;
+  return { total: total, porCuota: porCuota };
+}
+
 function parseCSV(csv, categoria) {
   const lines = csv.trim().split('\n');
   if (lines.length < 2) return [];
@@ -164,6 +204,7 @@ function parseCSV(csv, categoria) {
         descripcion: obj.descripcion || '',
         precio:      parseFloat((obj.precio || '0').replace(/[^\d.,]/g, '').replace(',', '.')) || 0,
         stock:       parseInt(obj.stock, 10) || 0,
+        cuotas:      parseCuotas(obj.cuotas || ''),
         imagen:      normalizeDriveUrl(obj.imagen || ''),
         categoria,
       };
@@ -234,11 +275,13 @@ function addToCart(product) {
   } else {
     if (product.stock < 1) { showToast('Sin stock.'); return; }
     cart.push({
-      id:       product.id,
-      nombre:   product.nombre,
-      precio:   product.precio,
-      imagen:   product.imagen,
-      cantidad: 1,
+      id:                product.id,
+      nombre:            product.nombre,
+      precio:            product.precio,
+      imagen:            product.imagen,
+      cantidad:          1,
+      cuotas:            product.cuotas || [],
+      cuotaSeleccionada: null,
     });
   }
   saveCart();
@@ -275,7 +318,9 @@ function removeFromCart(id) {
  * @returns {number}
  */
 function getCartTotal() {
-  return cart.reduce((sum, i) => sum + i.precio * i.cantidad, 0);
+  return cart.reduce(function(sum, i) {
+    return sum + calcPrecio(i.precio, i.cantidad, i.cuotaSeleccionada).total;
+  }, 0);
 }
 
 /**
@@ -439,17 +484,34 @@ function renderCartPanel() {
       ? item.imagen
       : `https://placehold.co/72x72/E8E3DA/8A8278?text=${encodeURIComponent(item.nombre)}`;
 
+    var _pc       = calcPrecio(item.precio, item.cantidad, item.cuotaSeleccionada);
+    var _total    = _pc.total;
+    var _porCuota = _pc.porCuota;
+
+    var _cuotasHtml = '';
+    if (item.cuotas && item.cuotas.length) {
+      var _opts = '<option value="contado"' + (!item.cuotaSeleccionada ? ' selected' : '') + '>Contado</option>';
+      item.cuotas.forEach(function(c) {
+        var _sel   = (item.cuotaSeleccionada && item.cuotaSeleccionada.n === c.n) ? ' selected' : '';
+        var _label = c.n + ' cuotas' + (c.recargo > 0 ? ' (+' + c.recargo + '%)' : ' sin interés');
+        _opts += '<option value="' + c.n + ';' + c.recargo + '"' + _sel + '>' + _label + '</option>';
+      });
+      var _pcLabel = _porCuota ? '<span class="cart-item__por-cuota">' + formatPrice(_porCuota) + '/cuota</span>' : '';
+      _cuotasHtml  = '<div class="cart-item__cuotas"><select class="cuota-select" data-id="' + item.id + '">' + _opts + '</select>' + _pcLabel + '</div>';
+    }
+
     el.innerHTML = `
       <img class="cart-item__img" src="${imgSrc}" alt="${item.nombre}"
         onerror="this.src='https://placehold.co/72x72/E8E3DA/8A8278?text=img'">
       <div class="cart-item__info">
         <span class="cart-item__name">${item.nombre}</span>
-        <span class="cart-item__price">${formatPrice(item.precio)}</span>
+        <span class="cart-item__price">${formatPrice(_total)}</span>
         <div class="cart-item__qty">
           <button class="qty-btn" data-action="dec" data-id="${item.id}" aria-label="Quitar uno">−</button>
           <span class="qty-value">${item.cantidad}</span>
           <button class="qty-btn" data-action="inc" data-id="${item.id}" aria-label="Agregar uno">+</button>
         </div>
+        ${_cuotasHtml}
       </div>
       <button class="cart-item__remove" data-id="${item.id}" aria-label="Eliminar">&times;</button>
     `;
@@ -474,6 +536,25 @@ function renderCartPanel() {
     el.querySelector('.cart-item__remove').addEventListener('click', () => {
       removeFromCart(item.id);
     });
+
+    // Selector de cuotas — IIFE para aislar el closure por ítem
+    (function() {
+      var sel = el.querySelector('.cuota-select');
+      if (!sel) return;
+      var _id = sel.dataset.id;
+      sel.addEventListener('change', function() {
+        var cartItem = cart.find(function(i) { return i.id === _id; });
+        if (!cartItem) return;
+        if (sel.value === 'contado') {
+          cartItem.cuotaSeleccionada = null;
+        } else {
+          var parts = sel.value.split(';');
+          cartItem.cuotaSeleccionada = { n: Number(parts[0]), recargo: Number(parts[1]) };
+        }
+        saveCart();
+        updateCartUI();
+      });
+    })();
 
     body.appendChild(el);
   });
@@ -532,8 +613,17 @@ function sendWhatsApp(nombre, celular, comentarios) {
   lines.push('');
   lines.push('Con los siguientes productos:');
   lines.push('');
-  cart.forEach(item => {
-    lines.push(`${item.nombre} (x${item.cantidad})`);
+  cart.forEach(function(item) {
+    var _p    = calcPrecio(item.precio, item.cantidad, item.cuotaSeleccionada);
+    var linea = item.nombre + ' (x' + item.cantidad + ') — ' + formatPrice(_p.total);
+    if (item.cuotaSeleccionada) {
+      linea += '\n     - ' + item.cuotaSeleccionada.n + ' cuotas' +
+        (item.cuotaSeleccionada.recargo > 0
+          ? ' +' + item.cuotaSeleccionada.recargo + '%'
+          : ' sin interés') +
+        ' de ' + formatPrice(_p.porCuota);
+    }
+    lines.push(linea);
   });
   lines.push('');
   lines.push(`*TOTAL: ${formatPrice(getCartTotal())}*`);
@@ -672,13 +762,21 @@ function renderOrderSummary() {
   const el = document.getElementById('orderSummary');
   el.innerHTML = '';
 
-  cart.forEach(item => {
-    const row = document.createElement('div');
+  cart.forEach(function(item) {
+    var _p   = calcPrecio(item.precio, item.cantidad, item.cuotaSeleccionada);
+    var row  = document.createElement('div');
     row.className = 'order-summary__row';
-    row.innerHTML = `
-      <span>${item.nombre} ×${item.cantidad}</span>
-      <span>${formatPrice(item.precio * item.cantidad)}</span>
-    `;
+    var _ci  = '';
+    if (item.cuotaSeleccionada) {
+      _ci = '<small class="order-summary__cuota">💳 ' +
+        item.cuotaSeleccionada.n + 'x de ' + formatPrice(_p.porCuota) +
+        (item.cuotaSeleccionada.recargo > 0
+          ? ' (+' + item.cuotaSeleccionada.recargo + '%)'
+          : ' s/i') +
+        '</small>';
+    }
+    row.innerHTML = '<span>' + item.nombre + ' ×' + item.cantidad + ' ' + _ci + '</span>' +
+                    '<span>' + formatPrice(_p.total) + '</span>';
     el.appendChild(row);
   });
 
